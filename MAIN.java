@@ -10,7 +10,7 @@ public class MAIN {
 		m1.generate();
 		System.out.println();
 		
-		System.out.println("Diagonal reverse solving, n = 8");
+		System.out.println("Diagonal reverse solving, n = 4");
 		m2.generate();
 		
 	}
