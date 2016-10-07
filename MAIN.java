@@ -12,10 +12,17 @@ public class MAIN {
 		System.out.println();
 		
 		System.out.println("Diagonal reverse solving, n = 4");
-		m2.generate();*/
+		m2.generate();
 		
 		MagicSquare m3 = new OptimizedMagicSquare(4);
-		m3.generate();
+		m3.generate();*/
+		
+		TreeMagicSquare tree = new TreeMagicSquare(4);
+		long startTime = System.currentTimeMillis();
+		tree.generate();
+		long end = System.currentTimeMillis();
+		System.out.println("Solutions: " + tree.getCpt());
+		System.out.println("Time: " + (end - startTime) / 1000 + "s");
 		
 	}
 

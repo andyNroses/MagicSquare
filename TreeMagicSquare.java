@@ -4,6 +4,7 @@ public class TreeMagicSquare {
 	
 	private int squareSize;
 	private ArrayList<Integer> combination;
+	public static int cpt = 0;
 	//private ArrayList<TreeMagicSquare> sons;
 	
 	public TreeMagicSquare(int n) {
@@ -16,13 +17,17 @@ public class TreeMagicSquare {
 		this.combination = c;
 	}
 	
+	public int getCpt() {
+		return cpt;
+	}
+	
 	public void generate() {
 		
-		for (int i = 1; i < Math.pow(this.squareSize, 2); i++) {			
+		for (int i = 1; i <= Math.pow(this.squareSize, 2); i++) {			
 			if (!this.combination.contains(i)) {
 				ArrayList<Integer> sonCombination = new ArrayList<Integer>();
 				sonCombination.addAll(this.combination);
-				sonCombination.add(i);				
+				sonCombination.add(i);
 				if (sonCombination.size() <= 16) {
 					if (this.check(sonCombination)) {
 						TreeMagicSquare son = new TreeMagicSquare(this.squareSize);
@@ -35,99 +40,89 @@ public class TreeMagicSquare {
 		}
 	}
 	
-	private boolean check(ArrayList<Integer> combination) {
+	private int sumLine(ArrayList<Integer> line, int start, int end) {
+		int sum = 0;
+		for (int i = start; i <= end; i++) {
+			sum += line.get(i);
+		}
+		return sum;
+	}
+	
+	private int sumColumn(ArrayList<Integer> column, int start, int end, int step) {
+		int sum = 0;
+		for (int i = start; i <= end; i = i + step) {
+			sum += column.get(i);
+		}
 		
-		//Je check si je suis à l'avant dernière case de la ligne
-		if ((combination.size() + 1) % this.squareSize == 0) {
-			int index = combination.size() - this.squareSize - 1;
-			int sum = 0;
-			for (int i = index; i < combination.size(); i++) {
-				sum += combination.get(i);
-			}
-			
-			boolean isOk = sum + Math.pow(this.squareSize, 2) >= MagicSquare.getMagicNumber(this.squareSize);
-			
-			//Je check si je suis à l'avant dernière ligne pour tester la diagonale
-			if (isOk && combination.size() == Math.pow(this.squareSize, 2) - this.squareSize - 1) {
-				//Je check la diagonale
-				int cpt = 0;
-				sum = 0;
-				for (int i = 0; i < Math.pow(this.squareSize - 1, 2); i = i + this.squareSize) {
-					sum += combination.get(i + cpt);
-					cpt++;
-				}
-				
-				isOk = sum + Math.pow(this.squareSize, 2) >= MagicSquare.getMagicNumber(this.squareSize);
-			
-				//Je check si les trois cases de la colonne + 16 sont ok
-				if(isOk) {
-					sum = 0;
-					for (int i = this.squareSize - 2; i < Math.pow(this.squareSize, 2) - this.squareSize - 1; i = i + 4) {
-						sum += combination.get(i);
-					}
-					
-					return sum + Math.pow(this.squareSize, 2) >= MagicSquare.getMagicNumber(this.squareSize);
+		return sum;
+	}
+	
+	private boolean check(ArrayList<Integer> combination) {
+		int index = combination.size() - 1;
+		switch(index) {
+			case 2:
+				return sumLine(combination, 0, 2) + 16 >= 34;
+			case 3:
+				return sumLine(combination, 0, 3) == 34;
+			case 6:
+				return sumLine(combination, 4, 6) + 16 >= 34;
+			case 7:
+				return sumLine(combination, 4, 7) == 34;
+			case 8:
+				return sumColumn(combination, 0, 8, 4) + 16 >= 34;
+			case 9:
+				if (sumColumn(combination, 1, 9, 4) + 16 >= 34) {
+					return combination.get(3) + combination.get(6) + combination.get(9) + 16 >= 34;
 				} else {
 					return false;
 				}
-				
-			} else {
-				return isOk;
-			}
-			
-		//Je check si je suis à la dernière case d'une ligne
-		} else if (combination.size() % this.squareSize == 0) {
-			
-			//Je check le nombre magique en ligne
-			int index = combination.size() - this.squareSize;
-			int sum = 0;
-			for (int i = index; i < combination.size(); i++) {
-				sum =+ combination.get(i);
-			}
-			
-			boolean isOk = sum == MagicSquare.getMagicNumber(this.squareSize);
-			
-			//Je check si je suis à la dernière ligne
-			if (isOk && combination.size() == Math.pow(this.squareSize, 2)) {
-				//Je check la diagonale
-				int cpt = 0;
-				sum = 0;
-				for (int i = 0; i < Math.pow(this.squareSize, 2); i = i + this.squareSize) {
-					sum += combination.get(i + cpt);
-					cpt++;
-				}
-				
-				isOk = sum == MagicSquare.getMagicNumber(this.squareSize);
-				
-				//Je check si la dernière colonne est ok
-				if (isOk) {
-					sum = 0;
-					for (int i = this.squareSize - 1; i < Math.pow(this.squareSize, 2); i = i + this.squareSize) {
-						sum += combination.get(i);
+			case 10:
+				if (sumLine(combination, 8, 10) + 16 >= 34) {
+					if (combination.get(0) + combination.get(5) + combination.get(10) + 16 >= 34) {
+						return sumColumn(combination, 2, 10, 4) + 16 >= 34;
+					} else {
+						return false;
 					}
-					
-					boolean ok = sum == MagicSquare.getMagicNumber(this.squareSize);
-					
-					if(ok) {
-						//SOLUTION !
-						System.out.println("solution!");
-					}
-					
-					return ok;
-					
 				} else {
 					return false;
 				}
-			} else if (isOk && combination.size() == Math.pow(this.squareSize, 2) - this.squareSize) {
-				sum = 0;
-				for (int i = this.squareSize - 2; i < Math.pow(this.squareSize, 2) - this.squareSize - 1; i = i + 4) {
-					sum += combination.get(i);
+			case 11:
+				if (sumLine(combination, 8, 11) == 34) {
+					return sumColumn(combination, 3, 11, 4) + 16 >= 34;
+				} else {
+					return false;
 				}
-				
-				return sum + Math.pow(this.squareSize, 2) >= MagicSquare.getMagicNumber(this.squareSize);
-			} else {
-				return isOk;
-			}
-		} 
+			case 12:
+				if (sumColumn(combination, 0, 12, 4) == 34) {
+					return combination.get(3) + combination.get(6) + combination.get(9) + combination.get(12) == 34;
+				} else {
+					return false;
+				}
+			case 13:
+				return sumColumn(combination, 1, 13, 4) == 34;
+			case 14:
+				if (sumLine(combination, 12, 14) + 16 >= 34) {
+					return sumColumn(combination, 2, 14, 4) == 34;
+				} else {
+					return false;
+				}
+			case 15:
+				if (sumLine(combination, 12, 15) == 34) {
+					if (sumColumn(combination, 3, 15, 4) == 34) {
+						if(combination.get(0) + combination.get(5) + combination.get(10) + combination.get(15) == 34) {
+							cpt++;
+							return true;
+						}  else {
+							return false;
+						}
+					} else {
+						return false;
+					}
+				} else {
+					return false;
+				}
+			default:
+				return true;
+ 		}
 	}
 }
