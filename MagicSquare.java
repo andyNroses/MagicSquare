@@ -11,6 +11,10 @@ abstract class MagicSquare {
 		this.magicNumber = (int) (n * (Math.pow(n, 2) + 1)) / 2;
 	}
 	
+	public static int getMagicNumber(int n) {
+		return (int) (n * (Math.pow(n, 2) + 1)) / 2;
+	}
+	
 	abstract void generate();
 	
 	public boolean isMagic() {
